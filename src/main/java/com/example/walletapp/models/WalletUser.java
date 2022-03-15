@@ -1,17 +1,17 @@
 package com.example.walletapp.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.walletapp.enums.KycLevel;
+import com.example.walletapp.enums.Role;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 public class WalletUser extends BaseModel {
 
     @Column(nullable = false, unique = true, name = "email")
@@ -23,6 +23,10 @@ public class WalletUser extends BaseModel {
     @Column(nullable = false, name = "lastname")
     private String lastName;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
+
     @Column(nullable = false, unique = true, name = "phonenumber")
     private String phoneNumber;
 
@@ -31,8 +35,5 @@ public class WalletUser extends BaseModel {
 
     @OneToOne(mappedBy = "walletUser")
     private Wallet wallet;
-
-    @OneToOne(mappedBy = "walletUser")
-    private WalletUser walletUser;
 
 }

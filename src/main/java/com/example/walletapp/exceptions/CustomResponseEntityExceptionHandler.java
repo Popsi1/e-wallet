@@ -40,4 +40,34 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         ExceptionResponse response = new ExceptionResponse(ex.getMessage());
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public final ResponseEntity<?> handleWalletException(InsufficientBalanceInWalletException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public final ResponseEntity<?> handleWalletException(KycAlreadyExistException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public final ResponseEntity<?> handleWalletException(KycMasterDoesNotExistException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public final ResponseEntity<?> handleWalletException(kycLevelAlreadyExistException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public final ResponseEntity<?> handleWalletException(Exception ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 }

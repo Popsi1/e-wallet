@@ -1,16 +1,16 @@
 package com.example.walletapp.models;
 
 import com.example.walletapp.enums.TransactionType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity
 public class Transaction extends BaseModel{
 

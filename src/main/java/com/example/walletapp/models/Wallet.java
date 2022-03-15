@@ -1,14 +1,17 @@
 package com.example.walletapp.models;
 
+import com.example.walletapp.enums.KycLevel;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 public class Wallet extends BaseModel {
 
     @Column(nullable = false, name = "walletname")
@@ -35,6 +38,9 @@ public class Wallet extends BaseModel {
     @OneToOne(mappedBy = "wallet")
     private KycUltimate kycUltimate;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "kycLevel")
+    private KycLevel kycLevel;
 
     @PrePersist
     public void setBalance(){ this.balance = 0.0;}

@@ -1,7 +1,7 @@
 package com.example.walletapp.services;
 
+import com.example.walletapp.constant.Constants;
 import com.example.walletapp.exceptions.KycAlreadyExistException;
-import com.example.walletapp.exceptions.UserAlreadyHasWalletException;
 import com.example.walletapp.exceptions.UserDoesNotExistException;
 import com.example.walletapp.exceptions.WalletIdDoesNotExistException;
 import com.example.walletapp.models.KycMaster;
@@ -28,7 +28,7 @@ public class KycService {
 
 
     @Transactional
-    public void createKycForMaster(KycMaster kycMaster, Long walletUserId, String kycLevel) {
+    public void createKycForMasterVerification(KycMaster kycMaster, Long walletUserId, String kycLevel) throws Exception {
 
         WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
 
@@ -44,13 +44,15 @@ public class KycService {
             throw new KycAlreadyExistException(walletUser.getWallet().getKycMaster().getId());
         }
 
-        kycMaster.setWallet(walletUser.getWallet());
+        if(kycLevel.equals(Constants.MASTER)){
+            kycMaster.setWallet(walletUser.getWallet());
+            kycMasterRepository.save(kycMaster);
+        }else throw new Exception("cannot verify");
 
-        kycMasterRepository.save(kycMaster);
     }
 
     @Transactional
-    public void createKycForUltimate(KycUltimate kycUltimate, Long walletUserId, String kycLevel) {
+    public void createKycForUltimateVerification(KycUltimate kycUltimate, Long walletUserId, String kycLevel) throws Exception {
 
         WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
 
@@ -62,12 +64,13 @@ public class KycService {
             throw new WalletIdDoesNotExistException(walletUser.getWallet().getId());
         }
 
-        if (walletUser.getWallet().getKycMaster() != null) {
-            throw new KycAlreadyExistException(walletUser.getWallet().getKycMaster().getId());
+        if (walletUser.getWallet().getKycUltimate() != null) {
+            throw new KycAlreadyExistException(walletUser.getWallet().getKycUltimate().getId());
         }
 
-        kycUltimate.setWallet(walletUser.getWallet());
-
-        kycUltimateRepository.save(kycUltimate);
+        if(kycLevel.equals(Constants.ULTIMATE)){
+            kycUltimate.setWallet(walletUser.getWallet());
+            kycUltimateRepository.save(kycUltimate);
+        }else throw new Exception("cannot verify");
     }
 }
