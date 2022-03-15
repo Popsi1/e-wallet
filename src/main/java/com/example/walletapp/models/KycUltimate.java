@@ -1,5 +1,7 @@
 package com.example.walletapp.models;
 
+import com.example.walletapp.dtos.KycMasterDto;
+import com.example.walletapp.dtos.KycUltimateDto;
 import com.example.walletapp.enums.KycLevel;
 import lombok.*;
 
@@ -18,4 +20,11 @@ public class KycUltimate extends BaseModel{
 
     @OneToOne
     private Wallet wallet;
+
+    public static KycUltimate from(KycUltimateDto kycUltimateDto) {
+        KycUltimate kycUltimate = new KycUltimate();
+        kycUltimate.setNationalId(kycUltimate.getNationalId());
+
+        return kycUltimate;
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.walletapp.controllers;
 
+import com.example.walletapp.dtos.WalletDto;
 import com.example.walletapp.exceptions.UserAlreadyHasWalletException;
 import com.example.walletapp.exceptions.UserDoesNotExistException;
 import com.example.walletapp.models.Wallet;
@@ -23,28 +24,17 @@ public class WalletController {
     @Autowired
     private ValidationErrorService validationErrorService;
 
-    @PostMapping("/{id}")
-    public ResponseEntity<?> createWallet(@Valid @RequestBody Wallet wallet, @PathVariable Long id) throws UserAlreadyHasWalletException, UserDoesNotExistException {
+    @PostMapping("/create/{id}")
+    public ResponseEntity<?> createWalletController(@Valid @RequestBody WalletDto walletDto, @PathVariable Long id) throws UserAlreadyHasWalletException, UserDoesNotExistException {
+        Wallet walletFromDto = Wallet.from(walletDto);
+        Wallet walletSaved = walletService.createWallet(id, walletFromDto);
 
-        //ResponseEntity errors = validationErrorService.validate(result);
-       // if (errors != null) return errors;
-        Wallet walletSaved = walletService.createWallet(id, wallet);
-        return new ResponseEntity<Wallet>(walletSaved,HttpStatus.CREATED);
+        return new ResponseEntity<>(walletSaved,HttpStatus.CREATED);
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Wallet wallet, BindingResult result){
-//
-//        ResponseEntity errors = validationErrorService.validate(result);
-//        if (errors != null) return errors;
-//        wallet.setId(id);
-//        Wallet walletSaved = walletService.createWallet(wallet);
-//        return new ResponseEntity<Wallet>(walletSaved,HttpStatus.OK);
-//    }
-
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> delete(@PathVariable Long id){
-//        walletService.delete(id);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        walletService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

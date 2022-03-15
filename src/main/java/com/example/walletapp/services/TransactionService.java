@@ -26,7 +26,7 @@ public class TransactionService {
     private WalletUserRepository walletUserRepository;
 
     @Transactional
-    public Transaction withdrawOrTopUpWallet(Long walletUserId, double amount, String type) throws Exception {
+    public String withdrawOrTopUpWallet(Long walletUserId, double amount, String transactionType) throws Exception {
 
         Transaction transaction = new Transaction();
 
@@ -45,7 +45,7 @@ public class TransactionService {
         }
 
 
-        if(type.equals(Constants.WITHDRAW)) {
+        if(transactionType.equals(Constants.WITHDRAW)) {
 
             if (walletUser.getWallet().getKycLevel() == null) {
                 if(amount>=100 && amount<=10000) {
@@ -67,7 +67,7 @@ public class TransactionService {
         }else throw new Exception("could not withdraw from account");
 
 
-        if(type.equals(Constants.DEPOSIT)) {
+        if(transactionType.equals(Constants.DEPOSIT)) {
 
             if (walletUser.getWallet().getKycLevel() == null) {
                 if (amount >= 100 && amount <= 10000) {
@@ -94,7 +94,10 @@ public class TransactionService {
         walletUserRepository.save(walletUser);
         transactionRepository.save(transaction);
 
-        return transaction;
+        String response;
+        response = transactionType.equals(Constants.WITHDRAW) ? "withdrawal successful" : "deposit successful";
+
+        return response;
     }
 
 
@@ -135,8 +138,8 @@ public class TransactionService {
 
 
     public String transferFromOneWalletUserToAnotherWalletUser (Long walletUserSenderId, Long walletUserReceiverId, double amount) throws Exception {
-        Transaction withdrawalTransaction = withdrawOrTopUpWallet(walletUserSenderId, amount, Constants.WITHDRAW);
-        Transaction depositTransaction = withdrawOrTopUpWallet(walletUserReceiverId, amount, Constants.DEPOSIT);
+        withdrawOrTopUpWallet(walletUserSenderId, amount, Constants.WITHDRAW);
+        withdrawOrTopUpWallet(walletUserReceiverId, amount, Constants.DEPOSIT);
 
         return Constants.TRANSFER;
     }
@@ -145,7 +148,7 @@ public class TransactionService {
 
 
     @Transactional
-    public String transferFromWalletByEmailAndAccountNumber(String emailOfWalletUserReceiver, String accountNumberOfWalletUserReceiver, Long walletUserSenderId, double amount, String type) throws Exception {
+    public String transferFromWalletByEmailAndAccountNumber(String emailOfWalletUserReceiver, String accountNumberOfWalletUserReceiver, Long walletUserSenderId, double amount) throws Exception {
 
         Transaction transactionForWalletUserSender = new Transaction();
         Transaction transactionForWalletReceiver = new Transaction();

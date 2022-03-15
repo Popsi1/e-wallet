@@ -70,4 +70,16 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         ExceptionResponse response = new ExceptionResponse(ex.getMessage());
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public final ResponseEntity<?> handleWalletException(EmailAlreadyExistException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public final ResponseEntity<?> handleWalletException(PhoneNumberAlreadyExistException ex, WebRequest request){
+        ExceptionResponse response = new ExceptionResponse(ex.getMessage());
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 }

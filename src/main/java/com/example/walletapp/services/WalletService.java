@@ -9,6 +9,7 @@ import com.example.walletapp.repositories.WalletUserRepository;
 import com.example.walletapp.repositories.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -22,7 +23,8 @@ public class WalletService {
     private WalletUserRepository walletUserRepository;
 
 
-    // use dto, accountnumeber must be equal to phone number
+    // use dtos, accountnumeber must be equal to phone number
+    @Transactional
     public Wallet createWallet(Long walletUserId, Wallet wallet) throws UserDoesNotExistException, UserAlreadyHasWalletException {
 
         WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
@@ -35,7 +37,11 @@ public class WalletService {
             throw new UserAlreadyHasWalletException(walletUser);
         }
 
+        wallet.setAccountNumber(walletUser.getPhoneNumber());
+
         wallet.setWalletUser(walletUser);
+        walletUser.setWallet(wallet);
+
         return  walletRepository.save(wallet);
     }
 
@@ -47,4 +53,6 @@ public class WalletService {
         }
         throw new WalletException("wallet with " + id + " does not exit");
     }
+
+
 }

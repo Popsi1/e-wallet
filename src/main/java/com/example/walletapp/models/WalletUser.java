@@ -1,5 +1,6 @@
 package com.example.walletapp.models;
 
+import com.example.walletapp.dtos.WalletUserDto;
 import com.example.walletapp.enums.Role;
 import lombok.*;
 
@@ -34,4 +35,15 @@ public class WalletUser extends BaseModel {
     @OneToOne(mappedBy = "walletUser")
     private Wallet wallet;
 
+
+    public static WalletUser from(WalletUserDto walletUserDto){
+        WalletUser walletUser = new WalletUser();
+        walletUser.setEmail(walletUserDto.getEmail());
+        walletUser.setFirstName(walletUserDto.getFirstName());
+        walletUser.setLastName(walletUserDto.getLastName());
+        walletUser.setRole(Role.valueOf(walletUserDto.getRole()));
+        walletUser.setPhoneNumber(walletUserDto.getPhoneNumber());
+        walletUser.setPassword(walletUserDto.getPassword());
+        return walletUser;
+    }
 }

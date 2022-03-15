@@ -16,6 +16,20 @@ public class WalletUserService {
     @Autowired
     private WalletUserRepository walletUserRepository;
 
+    public WalletUser createWalletUser(WalletUser walletUser){
+        WalletUser walletUserByEmail = walletUserRepository.findWalletUserByEmail(walletUser.getEmail());
+        WalletUser walletUserByPhoneNumber = walletUserRepository.findWalletUserByPhoneNumber(walletUser.getPhoneNumber());
+        if(walletUserByEmail.getEmail() != null){
+            throw new EmailAlreadyExistException(walletUserByEmail.getEmail());
+        }
+        if(walletUserByPhoneNumber.getPhoneNumber() != null){
+            throw new PhoneNumberAlreadyExistException(walletUserByPhoneNumber.getPhoneNumber());
+        }
+        WalletUser walletUserSaved = walletUserRepository.save(walletUser);
+
+        return walletUserSaved;
+    }
+
     @Transactional
     public String adminToApproveKycMasterVerification(Long walletUserId) throws Exception {
 
@@ -46,6 +60,7 @@ public class WalletUserService {
 
         return "kyc master verified";
     }
+
 
     @Transactional
     public String adminToApproveKycUltimateVerification(Long walletUserId) throws Exception {
