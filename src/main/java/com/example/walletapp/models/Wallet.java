@@ -7,7 +7,9 @@ import com.example.walletapp.enums.Role;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,10 +18,10 @@ import java.util.List;
 @Entity
 public class Wallet extends BaseModel {
 
-    @Column(nullable = false, name = "walletname")
+    @Column(name = "walletname")
     private String walletName;
 
-    @Column(nullable = false, unique = true, name = "accountnumber")
+    @Column(unique = true, name = "accountnumber")
     private String accountNumber;
 
     @Column(name = "description")
@@ -29,7 +31,7 @@ public class Wallet extends BaseModel {
     private double balance;
 
     @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL)
-    private List<Transaction> transaction;
+    private Set<Transaction> transaction = new HashSet<>();
 
     @OneToOne
     private WalletUser walletUser;
@@ -49,7 +51,7 @@ public class Wallet extends BaseModel {
 
     public static Wallet from(WalletDto walletDto) {
         Wallet wallet = new Wallet();
-        wallet.setAccountNumber(walletDto.getWalletName());
+        wallet.setWalletName(walletDto.getWalletName());
         wallet.setDescription(walletDto.getDescription());
 
         return wallet;

@@ -21,9 +21,10 @@ public class KycController {
     private KycService kycService;
 
     @PostMapping("/walletUser/{walletUserId}/createKycMaster/{kycLevel}")
-    public ResponseEntity<String> createKycForMaster(@RequestBody KycMasterDto kycMasterDto, @PathVariable Long walletUserId, @PathVariable String kycLevel) throws Exception {
+    public ResponseEntity<KycMaster> createKycForMaster(@RequestBody KycMasterDto kycMasterDto, @PathVariable Long walletUserId, @PathVariable String kycLevel) throws Exception {
+        System.out.println(kycMasterDto);
         KycMaster kycMasterFromDto = KycMaster.from(kycMasterDto);
-        String kycMasterVerificationPending = kycService.createKycForMasterVerification(kycMasterFromDto, walletUserId, kycLevel);
+        KycMaster kycMasterVerificationPending = kycService.createKycForMasterVerification(kycMasterFromDto, walletUserId, kycLevel);
 
         return new ResponseEntity<>(kycMasterVerificationPending, HttpStatus.CREATED);
     }

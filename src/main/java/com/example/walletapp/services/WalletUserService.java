@@ -19,12 +19,19 @@ public class WalletUserService {
     public WalletUser createWalletUser(WalletUser walletUser){
         WalletUser walletUserByEmail = walletUserRepository.findWalletUserByEmail(walletUser.getEmail());
         WalletUser walletUserByPhoneNumber = walletUserRepository.findWalletUserByPhoneNumber(walletUser.getPhoneNumber());
-        if(walletUserByEmail.getEmail() != null){
-            throw new EmailAlreadyExistException(walletUserByEmail.getEmail());
+        System.out.println(walletUserByEmail);
+        System.out.println(walletUserByPhoneNumber);
+        try {
+            if(walletUserByEmail.getEmail() != null){
+                throw new EmailAlreadyExistException(walletUserByEmail.getEmail());
+            }
+            if(walletUserByPhoneNumber.getPhoneNumber() != null){
+                throw new PhoneNumberAlreadyExistException(walletUserByPhoneNumber.getPhoneNumber());
+            }
+        }catch (NullPointerException ex){
+            System.out.println(ex);
         }
-        if(walletUserByPhoneNumber.getPhoneNumber() != null){
-            throw new PhoneNumberAlreadyExistException(walletUserByPhoneNumber.getPhoneNumber());
-        }
+
         WalletUser walletUserSaved = walletUserRepository.save(walletUser);
 
         return walletUserSaved;
@@ -35,21 +42,26 @@ public class WalletUserService {
 
         WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
 
-        if (walletUser == null) {
-            throw new UserDoesNotExistException(walletUserId);
+        try{
+            if (walletUser == null) {
+                throw new UserDoesNotExistException(walletUserId);
+            }
+
+            if (walletUser.getWallet() == null) {
+                throw new WalletIdDoesNotExistException(walletUser.getWallet().getId());
+            }
+
+            if (walletUser.getWallet().getKycLevel() != null) {
+                throw new kycLevelAlreadyExistException(walletUser.getWallet().getId());
+            }
+
+            if (walletUser.getWallet().getKycMaster() == null) {
+                throw new KycMasterDoesNotExistException(walletUser.getWallet().getId());
+            }
+        }catch (NullPointerException ex){
+            System.out.println(ex);
         }
 
-        if (walletUser.getWallet() == null) {
-            throw new WalletIdDoesNotExistException(walletUser.getWallet().getId());
-        }
-
-        if (walletUser.getWallet().getKycLevel() != null) {
-            throw new kycLevelAlreadyExistException(walletUser.getWallet().getId());
-        }
-
-        if (walletUser.getWallet().getKycMaster() == null) {
-            throw new KycMasterDoesNotExistException(walletUser.getWallet().getId());
-        }
 
         if(walletUser.getRole().equals(Role.Admin)){
             walletUser.getWallet().setKycLevel(KycLevel.Master);

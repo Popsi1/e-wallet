@@ -29,18 +29,22 @@ public class WalletService {
 
         WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
 
-        if (walletUser == null) {
-            throw new UserDoesNotExistException(walletUserId);
+        try {
+            if (walletUser == null) {
+                throw new UserDoesNotExistException(walletUserId);
+            }
+
+            if (walletUser.getWallet() != null) {
+                throw new UserAlreadyHasWalletException(walletUser);
+            }
+        }catch (NullPointerException ex){
+            System.out.println(ex);
         }
 
-        if (walletUser.getWallet() != null) {
-            throw new UserAlreadyHasWalletException(walletUser);
-        }
 
         wallet.setAccountNumber(walletUser.getPhoneNumber());
 
         wallet.setWalletUser(walletUser);
-        walletUser.setWallet(wallet);
 
         return  walletRepository.save(wallet);
     }

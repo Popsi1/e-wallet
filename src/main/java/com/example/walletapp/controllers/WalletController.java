@@ -9,7 +9,6 @@ import com.example.walletapp.services.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +24,7 @@ public class WalletController {
     private ValidationErrorService validationErrorService;
 
     @PostMapping("/create/{id}")
-    public ResponseEntity<?> createWalletController(@Valid @RequestBody WalletDto walletDto, @PathVariable Long id) throws UserAlreadyHasWalletException, UserDoesNotExistException {
+    public ResponseEntity<Wallet> createWalletController(@Valid @RequestBody WalletDto walletDto, @PathVariable Long id) throws UserAlreadyHasWalletException, UserDoesNotExistException {
         Wallet walletFromDto = Wallet.from(walletDto);
         Wallet walletSaved = walletService.createWallet(id, walletFromDto);
 

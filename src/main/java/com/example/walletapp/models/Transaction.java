@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @Entity
 public class Transaction extends BaseModel{
 
-    @Column(nullable = false, name = "amount")
+    @Column(name = "amount")
     private double amount;
 
     @Column(name = "description")
@@ -23,7 +23,7 @@ public class Transaction extends BaseModel{
     private double postBalance;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false, name = "transaction_type")
+    @Column(name = "transaction_type")
     private TransactionType type;
 
     @ManyToOne

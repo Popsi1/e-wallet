@@ -25,89 +25,91 @@ public class TransactionService {
     @Autowired
     private WalletUserRepository walletUserRepository;
 
-    @Transactional
-    public String withdrawOrTopUpWallet(Long walletUserId, double amount, String transactionType) throws Exception {
+    public Transaction withdrawOrTopUpWallet(Long walletUserId, double amount, String transactionType) throws Exception {
 
         Transaction transaction = new Transaction();
 
-        WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
+        WalletUser walletUser = walletUserRepository.findWalletUserById(walletUserId);
 
-        if (walletUser == null) {
-            throw new UserDoesNotExistException(walletUserId);
+        try {
+            if (walletUser == null) {
+                throw new UserDoesNotExistException(walletUserId);
+            }
+
+            if (walletUser.getWallet()==null) {
+                throw new WalletIdDoesNotExistException(walletUser.getWallet().getId());
+            }
+
+            if (walletUser.getWallet().getAccountNumber().isEmpty()){
+                throw new AccountNumberNotAssociatedWithWalletException(walletUser.getWallet().getId());
+            }
+        }catch (NullPointerException ex){
+
         }
 
-        if (walletUser.getWallet()==null) {
-            throw new WalletIdDoesNotExistException(walletUser.getWallet().getId());
-        }
 
-        if (walletUser.getWallet().getAccountNumber().isEmpty()){
-            throw new AccountNumberNotAssociatedWithWalletException(walletUser.getWallet().getId());
-        }
-
-
-        if(transactionType.equals(Constants.WITHDRAW)) {
+        if(transactionType.equals("withdraw")) {
 
             if (walletUser.getWallet().getKycLevel() == null) {
                 if(amount>=100 && amount<=10000) {
                     transaction = withdrawalTransaction(walletUser, amount, transaction);
-                }throw new Exception("cannot withdraw");
+                }else
+                    throw new Exception("cannot withdraw");
             }
 
             if (walletUser.getWallet().getKycLevel() == KycLevel.Master) {
                 if(amount>=100 && amount<=100000) {
                     transaction = withdrawalTransaction(walletUser, amount, transaction);
-                }throw new Exception("cannot withdraw");
+                }else
+                    throw new Exception("cannot withdraw");
             }
 
             if (walletUser.getWallet().getKycLevel() == KycLevel.Ultimate) {
                 if(amount>=100 && amount<=1000000) {
                     transaction = withdrawalTransaction(walletUser, amount, transaction);
-                }throw new Exception("cannot withdraw");
+                }else
+                    throw new Exception("cannot withdraw");
             }
-        }else throw new Exception("could not withdraw from account");
+        }
 
 
-        if(transactionType.equals(Constants.DEPOSIT)) {
+        if(transactionType.equals("deposit")) {
 
             if (walletUser.getWallet().getKycLevel() == null) {
+
                 if (amount >= 100 && amount <= 10000) {
-                    transaction = depositTransaction(walletUser, amount, transaction);
-                }throw new Exception("cannot deposit");
+                   transaction = depositTransaction(walletUser, amount, transaction);
+                }else
+                    throw new Exception("cannot deposit");
             }
 
             if (walletUser.getWallet().getKycLevel() == KycLevel.Master) {
                 if(amount>=100 && amount<=100000) {
                     transaction = depositTransaction(walletUser, amount, transaction);
-                }throw new Exception("cannot deposit");
+                }else
+                    throw new Exception("cannot deposit");
             }
 
             if (walletUser.getWallet().getKycLevel() == KycLevel.Ultimate) {
                 if(amount>=100 && amount<=1000000) {
                     transaction = depositTransaction(walletUser, amount, transaction);
-                }throw new Exception("cannot deposit");
+                }else
+                    throw new Exception("cannot deposit");
             }
-        }else
-            throw new Exception("could not deposit from account");
+        }
 
-
-        walletUser.getWallet().getTransaction().add(transaction);
-        walletUserRepository.save(walletUser);
-        transactionRepository.save(transaction);
-
-        String response;
-        response = transactionType.equals(Constants.WITHDRAW) ? "withdrawal successful" : "deposit successful";
-
-        return response;
+        return transactionRepository.save(transaction);
     }
 
 
 
     public Transaction withdrawalTransaction(WalletUser walletUser, double amount, Transaction transaction){
         if (walletUser.getWallet().getBalance() < amount) {
+            System.out.println(walletUser.getEmail());
             throw new InsufficientBalanceInWalletException(walletUser.getWallet().getId());
         }
         double currentBalance = walletUser.getWallet().getBalance() - amount;
-        double postBalance = currentBalance - amount;
+        double postBalance = currentBalance + amount;
         walletUser.getWallet().setBalance(currentBalance);
 
         transaction.setAmount(amount);
@@ -122,6 +124,7 @@ public class TransactionService {
 
 
     public Transaction depositTransaction(WalletUser walletUser, double amount, Transaction transaction){
+
         double currentBalance = walletUser.getWallet().getBalance() + amount;
         double postBalance = currentBalance - amount;
         walletUser.getWallet().setBalance(currentBalance);
@@ -148,7 +151,7 @@ public class TransactionService {
 
 
     @Transactional
-    public String transferFromWalletByEmailAndAccountNumber(String emailOfWalletUserReceiver, String accountNumberOfWalletUserReceiver, Long walletUserSenderId, double amount) throws Exception {
+    public Transaction transferFromWalletByEmailAndAccountNumber(String emailOfWalletUserReceiver, String accountNumberOfWalletUserReceiver, Long walletUserSenderId, double amount) throws Exception {
 
         Transaction transactionForWalletUserSender = new Transaction();
         Transaction transactionForWalletReceiver = new Transaction();
@@ -156,70 +159,71 @@ public class TransactionService {
         WalletUser walletUserReceiver = walletUserRepository.findWalletUserByEmail(emailOfWalletUserReceiver);
         WalletUser walletUserSender = walletUserRepository.findById(walletUserSenderId).orElse(null);
 
+        try {
 
-        if (walletUserReceiver == null || walletUserSender == null) {
-            throw new UserDoesNotExistException(walletUserReceiver==null ? walletUserReceiver.getId() : walletUserSender.getId());
+            if (walletUserReceiver == null || walletUserSender == null) {
+                throw new UserDoesNotExistException(walletUserReceiver == null ? walletUserReceiver.getId() : walletUserSender.getId());
+            }
+
+            if (walletUserReceiver.getWallet() == null || walletUserSender.getWallet() == null) {
+                throw new WalletIdDoesNotExistException(walletUserReceiver.getWallet() == null ? walletUserReceiver.getWallet().getId() : walletUserSender.getWallet().getId());
+            }
+
+            if (walletUserReceiver.getWallet().getAccountNumber().isEmpty() || walletUserSender.getWallet().getAccountNumber().isEmpty()) {
+                throw new AccountNumberNotAssociatedWithWalletException(walletUserReceiver.getWallet().getAccountNumber().isEmpty() ? walletUserReceiver.getWallet().getId() : walletUserSender.getWallet().getId());
+            }
+        }catch (NullPointerException ex){
+
         }
-
-        if (walletUserReceiver.getWallet() == null || walletUserSender.getWallet() == null) {
-            throw new WalletIdDoesNotExistException(walletUserReceiver.getWallet()==null ? walletUserReceiver.getWallet().getId() : walletUserSender.getWallet().getId());
-        }
-
-        if (walletUserReceiver.getWallet().getAccountNumber().isEmpty() || walletUserSender.getWallet().getAccountNumber().isEmpty()){
-            throw new AccountNumberNotAssociatedWithWalletException(walletUserReceiver.getWallet().getAccountNumber().isEmpty() ? walletUserReceiver.getWallet().getId() : walletUserSender.getWallet().getId());
-        }
-
 
         if (walletUserReceiver.getWallet().getAccountNumber().equals(accountNumberOfWalletUserReceiver)){
-
             if (walletUserSender.getWallet().getKycLevel() == null) {
                 if (amount >= 100 && amount <= 10000) {
                     transactionForWalletUserSender = withdrawalTransaction(walletUserSender, amount, transactionForWalletUserSender);
-                } throw new Exception("cannot transfer");
+                }else
+                    throw new Exception("cannot transfer 1");
             }
 
             if (walletUserSender.getWallet().getKycLevel() == KycLevel.Master) {
                 if (amount >= 100 && amount <= 100000) {
                     transactionForWalletUserSender = withdrawalTransaction(walletUserSender, amount, transactionForWalletUserSender);
-                } throw new Exception("cannot transfer");
+                }else
+                    throw new Exception("cannot transfer 2");
             }
 
             if (walletUserSender.getWallet().getKycLevel() == KycLevel.Ultimate) {
                 if (amount >= 100 && amount <= 1000000) {
                     transactionForWalletUserSender = withdrawalTransaction(walletUserSender, amount, transactionForWalletUserSender);
-                }
-                throw new Exception("cannot transfer");
+                }else
+                    throw new Exception("cannot transfer 3");
             }
 
-            walletUserSender.getWallet().getTransaction().add(transactionForWalletUserSender);
-            walletUserRepository.save(walletUserSender);
             transactionRepository.save(transactionForWalletUserSender);
 
             if (walletUserSender.getWallet().getKycLevel() == null) {
                 if (amount >= 100 && amount <= 10000) {
-                    transactionForWalletReceiver = withdrawalTransaction(walletUserReceiver, amount, transactionForWalletReceiver);
-                }throw new Exception("cannot transfer");
+                    transactionForWalletReceiver = depositTransaction(walletUserReceiver, amount, transactionForWalletReceiver);
+                }else
+                    throw new Exception("cannot transfer 4");
             }
 
             if (walletUserSender.getWallet().getKycLevel() == KycLevel.Master) {
                 if (amount >= 100 && amount <= 100000) {
-                    transactionForWalletReceiver = withdrawalTransaction(walletUserReceiver, amount, transactionForWalletReceiver);
-                }throw new Exception("cannot transfer");
+                    transactionForWalletReceiver = depositTransaction(walletUserReceiver, amount, transactionForWalletReceiver);
+                }throw new Exception("cannot transfer 5");
             }
 
             if (walletUserSender.getWallet().getKycLevel() == KycLevel.Ultimate) {
                 if (amount >= 100 && amount <= 1000000) {
-                    transactionForWalletReceiver = withdrawalTransaction(walletUserReceiver, amount, transactionForWalletReceiver);
-                }throw new Exception("cannot transfer");
+                    transactionForWalletReceiver = depositTransaction(walletUserReceiver, amount, transactionForWalletReceiver);
+                }throw new Exception("cannot transfer 6");
             }
 
-            walletUserReceiver.getWallet().getTransaction().add(transactionForWalletReceiver);
-            walletUserRepository.save(walletUserReceiver);
             transactionRepository.save(transactionForWalletReceiver);
 
         }
 
-        return Constants.TRANSFER;
+        return transactionForWalletReceiver;
     }
 
 }

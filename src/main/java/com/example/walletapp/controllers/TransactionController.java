@@ -1,7 +1,9 @@
 package com.example.walletapp.controllers;
 
 import com.example.walletapp.dtos.WalletUserDto;
+import com.example.walletapp.models.Transaction;
 import com.example.walletapp.models.WalletUser;
+import com.example.walletapp.repositories.WalletUserRepository;
 import com.example.walletapp.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +16,13 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private WalletUserRepository walletUserRepository;
+
+
     @GetMapping("/walletUser/{walletUserId}/withdrawOrTopUp/{amount}/kyc/{transactionType}")
-    public ResponseEntity<String> withdrawOrTopUpWalletController(@PathVariable Long walletUserId, @PathVariable double amount, @PathVariable String transactionType) throws Exception {
-        String transactionStatus = transactionService.withdrawOrTopUpWallet(walletUserId, amount, transactionType);
+    public ResponseEntity<Transaction> withdrawOrTopUpWalletController(@PathVariable Long walletUserId, @PathVariable double amount, @PathVariable String transactionType) throws Exception {
+        Transaction transactionStatus = transactionService.withdrawOrTopUpWallet(walletUserId, amount, transactionType);
         return new ResponseEntity<>(transactionStatus, HttpStatus.CREATED);
     }
 
@@ -27,8 +33,8 @@ public class TransactionController {
     }
 
     @GetMapping("/walletUserReceiverEmail/{emailOfWalletUserReceiver}/walletUserReceiverAccountNumber/{accountNumberOfWalletUserReceiver}/walletUserSender/{walletUserSenderId}/transfer/{amount}")
-    public ResponseEntity<String> transferFromWalletByEmailAndAccountNumberController(@PathVariable String emailOfWalletUserReceiver, @PathVariable String accountNumberOfWalletUserReceiver, @PathVariable Long walletUserSenderId, @PathVariable double amount) throws Exception {
-        String transactionStatus = transactionService.transferFromWalletByEmailAndAccountNumber(emailOfWalletUserReceiver, accountNumberOfWalletUserReceiver, walletUserSenderId, amount);
+    public ResponseEntity<Transaction> transferFromWalletByEmailAndAccountNumberController(@PathVariable String emailOfWalletUserReceiver, @PathVariable String accountNumberOfWalletUserReceiver, @PathVariable Long walletUserSenderId, @PathVariable double amount) throws Exception {
+        Transaction transactionStatus = transactionService.transferFromWalletByEmailAndAccountNumber(emailOfWalletUserReceiver, accountNumberOfWalletUserReceiver, walletUserSenderId, amount);
         return new ResponseEntity<>(transactionStatus, HttpStatus.CREATED);
     }
 }

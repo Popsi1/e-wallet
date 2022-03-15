@@ -28,7 +28,7 @@ public class KycService {
 
 
     @Transactional
-    public String createKycForMasterVerification(KycMaster kycMaster, Long walletUserId, String kycLevel) throws Exception {
+    public KycMaster createKycForMasterVerification(KycMaster kycMaster, Long walletUserId, String kycLevel) throws Exception {
 
         WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
 
@@ -47,9 +47,10 @@ public class KycService {
         if(kycLevel.equals(Constants.MASTER)){
             kycMaster.setWallet(walletUser.getWallet());
             kycMasterRepository.save(kycMaster);
-        }else throw new Exception("cannot verify");
+        }else
+            throw new Exception("cannot verify");
 
-        return "kyc verification pending";
+        return kycMaster;
 
     }
 
