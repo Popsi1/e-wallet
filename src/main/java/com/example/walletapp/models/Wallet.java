@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@ToString
 public class Wallet extends BaseModel {
 
     @Column(nullable = false, name = "walletname")

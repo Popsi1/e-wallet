@@ -1,6 +1,5 @@
 package com.example.walletapp.models;
 
-import com.example.walletapp.enums.KycLevel;
 import com.example.walletapp.enums.Role;
 import lombok.*;
 
@@ -11,7 +10,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class WalletUser extends BaseModel {
 
     @Column(nullable = false, unique = true, name = "email")
