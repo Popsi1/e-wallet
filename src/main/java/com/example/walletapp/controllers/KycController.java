@@ -22,7 +22,6 @@ public class KycController {
 
     @PostMapping("/walletUser/{walletUserId}/createKycMaster/{kycLevel}")
     public ResponseEntity<KycMaster> createKycForMaster(@RequestBody KycMasterDto kycMasterDto, @PathVariable Long walletUserId, @PathVariable String kycLevel) throws Exception {
-        System.out.println(kycMasterDto);
         KycMaster kycMasterFromDto = KycMaster.from(kycMasterDto);
         KycMaster kycMasterVerificationPending = kycService.createKycForMasterVerification(kycMasterFromDto, walletUserId, kycLevel);
 
@@ -30,9 +29,9 @@ public class KycController {
     }
 
     @PostMapping("/walletUser/{walletUserId}/createKycUltimate/{kycLevel}")
-    public ResponseEntity<String> createKycForMaster(@RequestBody KycUltimateDto kycUltimateDto, @PathVariable Long walletUserId, @PathVariable String kycLevel) throws Exception {
+    public ResponseEntity<KycUltimate> createKycForMaster(@RequestBody KycUltimateDto kycUltimateDto, @PathVariable Long walletUserId, @PathVariable String kycLevel) throws Exception {
         KycUltimate kycUltimateFromDto = KycUltimate.from(kycUltimateDto);
-        String kycUltimateDtoDtoVerificationPending = kycService.createKycForUltimateVerification(kycUltimateFromDto, walletUserId, kycLevel);
+        KycUltimate kycUltimateDtoDtoVerificationPending = kycService.createKycForUltimateVerification(kycUltimateFromDto, walletUserId, kycLevel);
 
         return new ResponseEntity<>(kycUltimateDtoDtoVerificationPending, HttpStatus.CREATED);
     }

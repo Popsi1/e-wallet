@@ -16,9 +16,6 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @Autowired
-    private WalletUserRepository walletUserRepository;
-
 
     @GetMapping("/walletUser/{walletUserId}/withdrawOrTopUp/{amount}/kyc/{transactionType}")
     public ResponseEntity<Transaction> withdrawOrTopUpWalletController(@PathVariable Long walletUserId, @PathVariable double amount, @PathVariable String transactionType) throws Exception {

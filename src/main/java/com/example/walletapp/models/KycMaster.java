@@ -14,8 +14,7 @@ import javax.persistence.*;
 @Entity
 public class KycMaster extends BaseModel{
 
-    @Column(name = "BvnNumber")
-    private String BvnNumber;
+    private String bvnNumber;
 
     @OneToOne
     private Wallet wallet;

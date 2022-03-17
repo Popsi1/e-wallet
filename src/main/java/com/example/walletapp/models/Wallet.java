@@ -4,9 +4,12 @@ import com.example.walletapp.dtos.WalletDto;
 import com.example.walletapp.dtos.WalletUserDto;
 import com.example.walletapp.enums.KycLevel;
 import com.example.walletapp.enums.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,16 +33,16 @@ public class Wallet extends BaseModel {
     @Column(name = "currentbalance")
     private double balance;
 
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL)
-    private Set<Transaction> transaction = new HashSet<>();
+//    @OneToMany
+//    private List<Transaction> transaction = new ArrayList<>();
 
     @OneToOne
     private WalletUser walletUser;
 
-    @OneToOne(mappedBy = "wallet")
+    @OneToOne
     private KycMaster kycMaster;
 
-    @OneToOne(mappedBy = "wallet")
+    @OneToOne
     private KycUltimate kycUltimate;
 
     @Enumerated(value = EnumType.STRING)

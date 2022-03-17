@@ -75,6 +75,8 @@ public class TransactionService {
 
         if(transactionType.equals("deposit")) {
 
+            assert walletUser != null;
+            //System.out.println(walletUser.getWallet());
             if (walletUser.getWallet().getKycLevel() == null) {
 
                 if (amount >= 100 && amount <= 10000) {
@@ -134,7 +136,8 @@ public class TransactionService {
         transaction.setPostBalance(postBalance);
         transaction.setType(TransactionType.DEPOSIT);
         transaction.setWallet(walletUser.getWallet());
-
+        //walletUser.getWallet().getTransaction().add(transaction);
+        //System.out.println(walletUser.getWallet().getTransaction());
         return transaction;
     }
 

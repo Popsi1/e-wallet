@@ -2,6 +2,7 @@ package com.example.walletapp.models;
 
 import com.example.walletapp.dtos.WalletUserDto;
 import com.example.walletapp.enums.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Setter
 public class WalletUser extends BaseModel {
 
-    @Column(name = "email")
+    @Column(unique = true,name = "email")
     private String  email;
 
     @Column( name = "firstname")
@@ -26,7 +27,7 @@ public class WalletUser extends BaseModel {
     @Column(name = "role")
     private Role role;
 
-    @Column(name = "phonenumber")
+    @Column(unique = true,name = "phonenumber")
     private String phoneNumber;
 
     @Column(name = "password")

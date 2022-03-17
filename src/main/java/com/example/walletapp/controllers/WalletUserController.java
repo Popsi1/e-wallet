@@ -1,7 +1,9 @@
 package com.example.walletapp.controllers;
 
 import com.example.walletapp.dtos.WalletUserDto;
+import com.example.walletapp.exceptions.PhoneNumberAlreadyExistException;
 import com.example.walletapp.models.WalletUser;
+import com.example.walletapp.repositories.WalletUserRepository;
 import com.example.walletapp.services.WalletUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

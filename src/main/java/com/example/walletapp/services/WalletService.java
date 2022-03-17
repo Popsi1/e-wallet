@@ -27,25 +27,31 @@ public class WalletService {
     @Transactional
     public Wallet createWallet(Long walletUserId, Wallet wallet) throws UserDoesNotExistException, UserAlreadyHasWalletException {
 
-        WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
+        WalletUser walletUser = null;
+
+        try {
+             walletUser = walletUserRepository.findById(walletUserId).orElse(null);
+        }catch (NullPointerException ex){
+
+        }
 
         try {
             if (walletUser == null) {
                 throw new UserDoesNotExistException(walletUserId);
             }
+        }catch (NullPointerException ex){
 
+        }
+        try {
             if (walletUser.getWallet() != null) {
                 throw new UserAlreadyHasWalletException(walletUser);
             }
         }catch (NullPointerException ex){
-            System.out.println(ex);
+
         }
 
-
         wallet.setAccountNumber(walletUser.getPhoneNumber());
-
         wallet.setWalletUser(walletUser);
-
         return  walletRepository.save(wallet);
     }
 

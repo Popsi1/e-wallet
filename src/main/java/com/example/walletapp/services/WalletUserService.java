@@ -17,19 +17,22 @@ public class WalletUserService {
     private WalletUserRepository walletUserRepository;
 
     public WalletUser createWalletUser(WalletUser walletUser){
-        WalletUser walletUserByEmail = walletUserRepository.findWalletUserByEmail(walletUser.getEmail());
-        WalletUser walletUserByPhoneNumber = walletUserRepository.findWalletUserByPhoneNumber(walletUser.getPhoneNumber());
-        System.out.println(walletUserByEmail);
-        System.out.println(walletUserByPhoneNumber);
-        try {
-            if(walletUserByEmail.getEmail() != null){
+        try{
+             WalletUser walletUserByEmail = walletUserRepository.findWalletUserByEmail(walletUser.getEmail());
+             if(walletUserByEmail.getEmail() != null){
                 throw new EmailAlreadyExistException(walletUserByEmail.getEmail());
             }
+
+        }catch (NullPointerException ex){
+
+        }
+        try {
+            WalletUser walletUserByPhoneNumber = walletUserRepository.findWalletUserByPhoneNumber(walletUser.getPhoneNumber());
             if(walletUserByPhoneNumber.getPhoneNumber() != null){
                 throw new PhoneNumberAlreadyExistException(walletUserByPhoneNumber.getPhoneNumber());
             }
         }catch (NullPointerException ex){
-            System.out.println(ex);
+
         }
 
         WalletUser walletUserSaved = walletUserRepository.save(walletUser);

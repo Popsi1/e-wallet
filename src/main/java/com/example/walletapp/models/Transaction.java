@@ -1,6 +1,7 @@
 package com.example.walletapp.models;
 
 import com.example.walletapp.enums.TransactionType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;

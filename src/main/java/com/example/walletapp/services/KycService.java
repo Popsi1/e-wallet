@@ -44,18 +44,18 @@ public class KycService {
             throw new KycAlreadyExistException(walletUser.getWallet().getKycMaster().getId());
         }
 
-        if(kycLevel.equals(Constants.MASTER)){
-            kycMaster.setWallet(walletUser.getWallet());
-            kycMasterRepository.save(kycMaster);
+        if(kycLevel.equalsIgnoreCase(Constants.MASTER)){
+            System.out.println("baby");
+           kycMaster.setWallet(walletUser.getWallet());
         }else
             throw new Exception("cannot verify");
 
-        return kycMaster;
+        return  kycMasterRepository.save(kycMaster);
 
     }
 
     @Transactional
-    public String createKycForUltimateVerification(KycUltimate kycUltimate, Long walletUserId, String kycLevel) throws Exception {
+    public KycUltimate createKycForUltimateVerification(KycUltimate kycUltimate, Long walletUserId, String kycLevel) throws Exception {
 
         WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
 
@@ -71,11 +71,11 @@ public class KycService {
             throw new KycAlreadyExistException(walletUser.getWallet().getKycUltimate().getId());
         }
 
-        if(kycLevel.equals(Constants.ULTIMATE)){
+        if(kycLevel.equalsIgnoreCase(Constants.ULTIMATE)){
             kycUltimate.setWallet(walletUser.getWallet());
-            kycUltimateRepository.save(kycUltimate);
+
         }else throw new Exception("cannot verify");
 
-        return "kyc verification pending";
+        return  kycUltimateRepository.save(kycUltimate);
     }
 }
