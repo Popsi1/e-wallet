@@ -2,6 +2,7 @@ package com.example.walletapp.models;
 
 import com.example.walletapp.enums.TransactionType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,5 +30,6 @@ public class Transaction extends BaseModel{
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     private Wallet wallet;
 }

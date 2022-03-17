@@ -2,6 +2,7 @@ package com.example.walletapp.models;
 
 import com.example.walletapp.dtos.WalletUserDto;
 import com.example.walletapp.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
@@ -34,6 +35,7 @@ public class WalletUser extends BaseModel {
     private String password;
 
     @OneToOne(mappedBy = "walletUser")
+    @JsonIgnore
     private Wallet wallet;
 
 

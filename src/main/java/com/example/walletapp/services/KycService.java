@@ -1,6 +1,7 @@
 package com.example.walletapp.services;
 
 import com.example.walletapp.constant.Constants;
+import com.example.walletapp.enums.KycLevel;
 import com.example.walletapp.exceptions.KycAlreadyExistException;
 import com.example.walletapp.exceptions.UserDoesNotExistException;
 import com.example.walletapp.exceptions.WalletIdDoesNotExistException;
@@ -30,23 +31,35 @@ public class KycService {
     @Transactional
     public KycMaster createKycForMasterVerification(KycMaster kycMaster, Long walletUserId, String kycLevel) throws Exception {
 
-        WalletUser walletUser = walletUserRepository.findById(walletUserId).orElse(null);
+        WalletUser walletUser = null;
 
-        if (walletUser == null) {
-            throw new UserDoesNotExistException(walletUserId);
+        try {
+            walletUser = walletUserRepository.findById(walletUserId).orElse(null);
+        }catch (NullPointerException ex){
+
         }
 
-        if (walletUser.getWallet() == null) {
-            throw new WalletIdDoesNotExistException(walletUser.getWallet().getId());
+        try {
+            if (walletUser == null) {
+                throw new UserDoesNotExistException(walletUserId);
+            }
+
+        }catch (NullPointerException ex){
+
         }
 
-        if (walletUser.getWallet().getKycMaster() != null) {
-            throw new KycAlreadyExistException(walletUser.getWallet().getKycMaster().getId());
+        try {
+            if(walletUser.getWallet().getKycLevel()==KycLevel.Master || walletUser.getWallet().getKycLevel()==KycLevel.Ultimate){
+                throw new KycAlreadyExistException("wallet user already have master kyc");
+            }
+        }catch (NullPointerException ex){
+
         }
+
 
         if(kycLevel.equalsIgnoreCase(Constants.MASTER)){
-            System.out.println("baby");
            kycMaster.setWallet(walletUser.getWallet());
+           walletUser.getWallet().setKycLevel(KycLevel.Master);
         }else
             throw new Exception("cannot verify");
 
@@ -68,12 +81,13 @@ public class KycService {
         }
 
         if (walletUser.getWallet().getKycUltimate() != null) {
-            throw new KycAlreadyExistException(walletUser.getWallet().getKycUltimate().getId());
+            throw new KycAlreadyExistException("wallet user already have ultimate kyc");
         }
 
-        if(kycLevel.equalsIgnoreCase(Constants.ULTIMATE)){
+        // avoid nullpointerexceptin, if it does not work with try catch, change the logic
+        if(kycLevel.equalsIgnoreCase(Constants.ULTIMATE) && walletUser.getWallet().getKycLevel()==KycLevel.Master){
             kycUltimate.setWallet(walletUser.getWallet());
-
+            walletUser.getWallet().setKycLevel(KycLevel.Ultimate);
         }else throw new Exception("cannot verify");
 
         return  kycUltimateRepository.save(kycUltimate);

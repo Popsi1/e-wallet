@@ -2,6 +2,7 @@ package com.example.walletapp.controllers;
 
 import com.example.walletapp.dtos.KycMasterDto;
 import com.example.walletapp.dtos.KycUltimateDto;
+import com.example.walletapp.exceptions.KycAlreadyExistException;
 import com.example.walletapp.models.KycMaster;
 import com.example.walletapp.models.KycUltimate;
 import com.example.walletapp.repositories.KycMasterRepository;

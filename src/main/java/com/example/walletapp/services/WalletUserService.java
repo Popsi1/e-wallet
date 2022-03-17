@@ -66,11 +66,11 @@ public class WalletUserService {
         }
 
 
-        if(walletUser.getRole().equals(Role.Admin)){
-            walletUser.getWallet().setKycLevel(KycLevel.Master);
-            walletUserRepository.save(walletUser);
-        }else
-            throw new Exception("wallet user role must be admin");
+//        if(walletUser.getRole().equals(Role.Admin)){
+//            walletUser.getWallet().setKycLevel(KycLevel.Master);
+//            walletUserRepository.save(walletUser);
+//        }else
+//            throw new Exception("wallet user role must be admin");
 
 
         return "kyc master verified";
@@ -91,9 +91,9 @@ public class WalletUserService {
             throw new WalletIdDoesNotExistException(walletUser.getWallet().getId());
         }
 
-        if (walletUser.getWallet().getKycLevel() == KycLevel.Ultimate) {
-            throw new kycLevelAlreadyExistException(walletUser.getWallet().getId());
-        }
+//        if (walletUser.getWallet().getKycLevel() == KycLevel.Ultimate) {
+//            throw new kycLevelAlreadyExistException(walletUser.getWallet().getId());
+//        }
 
         if (walletUser.getWallet().getKycLevel() == null) {
             throw new Exception("you need to verify kyc master");
@@ -103,11 +103,11 @@ public class WalletUserService {
             throw new KycUltimateDoesNotExistException(walletUser.getWallet().getId());
         }
 
-        if(walletUser.getRole().equals(Role.Admin) && walletUser.getWallet().getKycLevel() == KycLevel.Master){
-            walletUser.getWallet().setKycLevel(KycLevel.Ultimate);
-            walletUserRepository.save(walletUser);
-        }else
-            throw new Exception("wallet user role must be admin");
+//        if(walletUser.getRole().equals(Role.Admin) && walletUser.getWallet().getKycLevel() == KycLevel.Master){
+//            walletUser.getWallet().setKycLevel(KycLevel.Ultimate);
+//            walletUserRepository.save(walletUser);
+//        }else
+//            throw new Exception("wallet user role must be admin");
 
         return "kyc ultimate verified";
     }

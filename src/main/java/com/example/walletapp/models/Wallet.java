@@ -5,14 +5,11 @@ import com.example.walletapp.dtos.WalletUserDto;
 import com.example.walletapp.enums.KycLevel;
 import com.example.walletapp.enums.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -33,16 +30,16 @@ public class Wallet extends BaseModel {
     @Column(name = "currentbalance")
     private double balance;
 
-//    @OneToMany
-//    private List<Transaction> transaction = new ArrayList<>();
-
     @OneToOne
+    @JsonIgnore
     private WalletUser walletUser;
 
     @OneToOne
+    @JsonIgnore
     private KycMaster kycMaster;
 
     @OneToOne
+    @JsonIgnore
     private KycUltimate kycUltimate;
 
     @Enumerated(value = EnumType.STRING)

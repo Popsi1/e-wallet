@@ -136,8 +136,7 @@ public class TransactionService {
         transaction.setPostBalance(postBalance);
         transaction.setType(TransactionType.DEPOSIT);
         transaction.setWallet(walletUser.getWallet());
-        //walletUser.getWallet().getTransaction().add(transaction);
-        //System.out.println(walletUser.getWallet().getTransaction());
+
         return transaction;
     }
 

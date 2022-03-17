@@ -22,8 +22,6 @@ public class WalletService {
     @Autowired
     private WalletUserRepository walletUserRepository;
 
-
-    // use dtos, accountnumeber must be equal to phone number
     @Transactional
     public Wallet createWallet(Long walletUserId, Wallet wallet) throws UserDoesNotExistException, UserAlreadyHasWalletException {
 
@@ -31,6 +29,8 @@ public class WalletService {
 
         try {
              walletUser = walletUserRepository.findById(walletUserId).orElse(null);
+            System.out.println(walletUser.getWallet());
+
         }catch (NullPointerException ex){
 
         }
