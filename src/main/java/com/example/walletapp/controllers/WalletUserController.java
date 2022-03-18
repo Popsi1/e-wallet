@@ -23,15 +23,15 @@ public class WalletUserController {
         return new ResponseEntity<>(walletUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/approveKycMaster/{walletUserId}")
-    public ResponseEntity<String> approveKycMasterVerification(@PathVariable Long walletUserId) throws Exception {
-        String approveKycMaster = walletUserService.adminToApproveKycMasterVerification(walletUserId);
+    @GetMapping("/approveKycMaster/{adminWalletUserId}/user/{walletUserId}")
+    public ResponseEntity<String> approveKycMasterVerification(@PathVariable Long adminWalletUserId, @PathVariable Long walletUserId) throws Exception {
+        String approveKycMaster = walletUserService.adminToApproveKycMasterVerification(adminWalletUserId,walletUserId);
         return new ResponseEntity<>(approveKycMaster, HttpStatus.OK);
     }
 
-    @GetMapping("/approveKycUltimate/{walletUserId}")
-    public ResponseEntity<String> approveKycUltimateVerification(@PathVariable Long walletUserId) throws Exception {
-        String approveKycUltimate = walletUserService.adminToApproveKycMasterVerification(walletUserId);
+    @GetMapping("/approveKycUltimate/{adminWalletUserId}/user/{walletUserId}")
+    public ResponseEntity<String> approveKycUltimateVerification(@PathVariable Long adminWalletUserId,@PathVariable Long walletUserId) throws Exception {
+        String approveKycUltimate = walletUserService.adminToApproveKycUltimateVerification(adminWalletUserId,walletUserId);
         return new ResponseEntity<>(approveKycUltimate, HttpStatus.OK);
     }
 

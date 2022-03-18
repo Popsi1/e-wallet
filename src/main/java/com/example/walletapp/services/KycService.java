@@ -40,6 +40,16 @@ public class KycService {
         }
 
         try {
+            assert walletUser != null;
+            if (walletUser.getWallet() == null) { // nullpointerexception can occur here
+                throw new WalletIdDoesNotExistException(walletUser.getFirstName() +" dont have a wallet"); // and also occur here, so its better u use message to avoid double errors which cannot be caught by try catch(only catch one exception not two)
+            }
+        }catch (NullPointerException ex){
+
+        }
+
+
+        try {
             if (walletUser == null) {
                 throw new UserDoesNotExistException(walletUserId);
             }
@@ -56,14 +66,19 @@ public class KycService {
 
         }
 
+        KycMaster kycMasterSaved=null;
+        try {
+            if (kycLevel.equalsIgnoreCase(Constants.MASTER)) {
+                kycMasterSaved = kycMasterRepository.save(kycMaster);
+                System.out.println(kycMasterSaved);
+                kycMasterSaved.setWallet(walletUser.getWallet());
+                walletUser.getWallet().setKycMaster(kycMasterSaved);
+            } else
+                throw new Exception("cannot verify");
+        }catch (NullPointerException ex){
 
-        if(kycLevel.equalsIgnoreCase(Constants.MASTER)){
-           kycMaster.setWallet(walletUser.getWallet());
-           walletUser.getWallet().setKycLevel(KycLevel.Master);
-        }else
-            throw new Exception("cannot verify");
-
-        return  kycMasterRepository.save(kycMaster);
+        }
+        return kycMasterSaved;
 
     }
 
@@ -84,12 +99,14 @@ public class KycService {
             throw new KycAlreadyExistException("wallet user already have ultimate kyc");
         }
 
+        KycUltimate kycUltimateSaved=null;
         // avoid nullpointerexceptin, if it does not work with try catch, change the logic
         if(kycLevel.equalsIgnoreCase(Constants.ULTIMATE) && walletUser.getWallet().getKycLevel()==KycLevel.Master){
+            kycUltimateSaved = kycUltimateRepository.save(kycUltimate);
             kycUltimate.setWallet(walletUser.getWallet());
-            walletUser.getWallet().setKycLevel(KycLevel.Ultimate);
+            walletUser.getWallet().setKycUltimate(kycUltimateSaved);
         }else throw new Exception("cannot verify");
 
-        return  kycUltimateRepository.save(kycUltimate);
+        return kycUltimateSaved;
     }
 }
